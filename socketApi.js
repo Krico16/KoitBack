@@ -14,7 +14,10 @@ const socketapi = {
 };
 
 io.on('connection', (socket) => {
-    setInterval(() => {
+    var checkInterval;
+
+    clearInterval(checkInterval);
+    checkInterval = setInterval(() => {
         si.mem(data => {
             socket.broadcast.emit('usedMem', (100 - ((data.free/data.total) * 100)).toFixed(2))
         })
@@ -22,7 +25,11 @@ io.on('connection', (socket) => {
             socket.broadcast.emit('usedCpu', data.currentload.toFixed(2))
         })
     }, 5000)
+    io.on('disconnect',()=>{
+        clearInterval(checkInterval)
+    })
 })
+
 
 
 function formatBytes(a, b = 2) {
